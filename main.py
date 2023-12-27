@@ -57,7 +57,10 @@ def post_code(stud_id: Union[int, None] = None, code=Form(), lang=Form()):
     print(f"docker build "
               f"--build-arg lang={lang} "  
               f"--build-arg task_id={id} "
-              f"--build-arg problem_id={problem_id}")
+              f"--build-arg problem_id={problem_id}"
+              f"-t {id}")
+    print(f"docker run {id} --rm &> {id} && docker rmi -f {id}")
+
     shutil.rmtree(path)
     return RedirectResponse("/op", status_code=302)
 
