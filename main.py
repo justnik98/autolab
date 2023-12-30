@@ -67,7 +67,7 @@ async def post_code(request: Request, stud_id: Union[int, None] = None, code=For
           f"--build-arg problem_id={problem_id}"
           f"-t {id}")
     print(f"docker run {id} --rm {id} --rm &> {path}/{id}err > {path}/{id} && docker rmi -f {id}")
-    file = open(f"{path}/out", 'r')
+    file = open(f"{path}/{id}/{id}", 'r')
     # print(file.read())
     output = file.read()
     file.close()
