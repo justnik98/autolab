@@ -61,18 +61,15 @@ async def post_code(request: Request, stud_id: Union[int, None] = None, code=For
               f"--build-arg task_id={id} "
               f"--build-arg problem_id={problem_id} " 
               f"-t {id}")
-    command = f"docker run {id}"
-    out_file = f"{path}/output"
-    err_file = f"{path}/errors"
-    with open(out_file,"w") as out:
-    	process = subprocess.Popen([command], stdout=out)
-    	#process.wait()
-    file = open(f"{path}/{id}", 'r')
-    # print(file.read())
+    command = f"docker run {id} > out.txt --rm"
+    os.popen(command)
+    os.wait()
+    command =  f"docker rmi {id} -f"
+    os.popen(command)
+    file = open("./out.txt", 'r')
     output = file.read()
     file.close()
-    # shutil.rmtree(path)
-    result = ""
+    shutil.rmtree(path)
     result = "Not Passed"
     return templates.TemplateResponse(name="op.html",
                                       context={"request": request, "id": id, "result": result, "output": output})
