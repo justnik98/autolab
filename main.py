@@ -2,6 +2,7 @@ import json
 import os.path
 import shutil
 import threading
+import subprocess
 from typing import Union
 import uvicorn
 from fastapi import FastAPI, Form, Request
@@ -55,19 +56,18 @@ async def post_code(request: Request, stud_id: Union[int, None] = None, code=For
     file = open(f"{path}/main{file_extensions[lang]}", 'w')
     file.write(code)
     file.close()
-    # os.system(f"docker build ./scripts/"
-    #           f"--build-arg lang={lang} "
-    #           f"--build-arg task_id={id} "
-    #           f"--build-arg problem_id={problem_id}"
-    #           f"-t {id}")
-    # os.system(f"docker run {id} --rm &> {path}/{id}err > {path}/{id} && docker rmi -f {id}")
-    print(f"docker build ./scripts/"
-          f"--build-arg lang={lang} "
-          f"--build-arg task_id={id} "
-          f"--build-arg problem_id={problem_id}"
-          f"-t {id}")
-    print(f"docker run {id} --rm {id} --rm &> {path}/{id}err > {path}/{id} && docker rmi -f {id}")
-    file = open(f"{path}/{id}/{id}", 'r')
+    os.system(f"docker build . "
+              f"--build-arg lang={lang} "
+              f"--build-arg task_id={id} "
+              f"--build-arg problem_id={problem_id} " 
+              f"-t {id}")
+    command = f"docker run {id}"
+    out_file = f"{path}/output"
+    err_file = f"{path}/errors"
+    with open(out_file,"w") as out:
+    	process = subprocess.Popen([command], stdout=out)
+    	#process.wait()
+    file = open(f"{path}/{id}", 'r')
     # print(file.read())
     output = file.read()
     file.close()
