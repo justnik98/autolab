@@ -8,14 +8,14 @@
 <div>
     <form method="post" action="/post_code">
         <p>
-            <select name = "lang">
-                <option disabled> Выберите язык </option>
-                <option value = "cpp"> C++ </option>
-                <option value = "python"> Python </option>
+            <select name="lang">
+                <option disabled> Выберите язык</option>
+                <option value="cpp"> C++</option>
+                <option value="python"> Python</option>
             </select>
         </p>
         <p>
-            <textarea name = "code">
+            <textarea name="code">
 
             </textarea>
         </p>
@@ -24,12 +24,15 @@
         </p>
     </form>
     <div>
-        <h1> Result: {{result}}</h1>
-        <p>
-            <h2>
-                    {{output}}
-            </h2>
-        </p>
+        <h2>Task with id {{id}} finished</h2>
+        <h1> Result: </h1>
+        <h2> {{result}}</h2>
+        <div>
+            <h3>
+                {{output}}
+            </h3>
+        </div>
+
     </div>
 
 </div>
