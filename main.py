@@ -70,9 +70,8 @@ async def post_code(request: Request, stud_id: Union[int, None] = None, code=For
     output = file.read()
     file.close()
     shutil.rmtree(path)
-    result = "Not Passed"
     return templates.TemplateResponse(name="op.html",
-                                      context={"request": request, "id": id, "result": result, "output": output,
+                                      context={"request": request, "id": id, "output": output,
                                                "code": code})
     # return RedirectResponse("/op", status_code=302)
 
