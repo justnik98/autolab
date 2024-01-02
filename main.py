@@ -5,13 +5,15 @@ import threading
 import subprocess
 from typing import Union
 import uvicorn
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-app = FastAPI()
+from auth import *
+
+# app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 # globals
@@ -24,12 +26,24 @@ file_extensions = {
 }
 
 
-@app.get("/")
-def read_root(request: Request):
+@app.get("/", dependencies=[Depends(get_auth_user)])
+async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-@app.get("/op")
+@app.get("/login")
+async def read_root(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+
+@app.post("/logout")
+async def session_logout(response: Response):
+    print("logged out")
+    response.delete_cookie(key="Authorization")
+    return {"status": "logged out"}
+
+
+@app.get("/op", dependencies=[Depends(get_auth_user)])
 async def op(request: Request):
     return templates.TemplateResponse("op.html", {"request": request})
 
