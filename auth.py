@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from enum import Enum
 from typing import Annotated
 
 import uvicorn
@@ -25,6 +26,13 @@ fake_users_db = {
 }
 
 
+class Status(Enum):
+    STUDENT = 0
+    TUTOR = 1
+    ADMIN = 2
+    MAIN_ADMIN = 3
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
@@ -38,6 +46,7 @@ class User(BaseModel):
     username: str
     email: str | None = None
     full_name: str | None = None
+    status: int | None = None
     disabled: bool | None = None
 
 
