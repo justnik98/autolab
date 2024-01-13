@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Annotated
 
 import uvicorn
+import psycopg2 as pg
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -25,6 +26,8 @@ fake_users_db = {
     }
 }
 
+db = pg.connect(dbname="autolabs", user="postgres", password="123", host="127.0.0.1")
+
 
 class Status(Enum):
     STUDENT = 0
@@ -46,7 +49,7 @@ class User(BaseModel):
     username: str
     email: str | None = None
     full_name: str | None = None
-    status: int | None = None
+    role: int | None = None
     disabled: bool | None = None
 
 
@@ -69,14 +72,17 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
+def get_user(username: str):
+    cur = db.cursor()
+    cur.execute(f"SELECT * FROM auth WHERE username=\'{username}\'")
+    print(cur.statusmessage)
+    for row in cur:
+        user_dict = {'username': row[1], 'hashed_password': row[2], 'role': row[3]}
         return UserInDB(**user_dict)
 
 
-def authenticate_user(fake_db, username: str, password: str):
-    user = get_user(fake_db, username)
+def authenticate_user(username: str, password: str):
+    user = get_user(username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -109,7 +115,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -135,7 +141,7 @@ async def get_auth_user(request: Request):
 
 @app.post("/auth")
 async def login_for_access_token(login=Form(), password=Form()):
-    user = authenticate_user(fake_users_db, login, password)
+    user = authenticate_user(login, password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
