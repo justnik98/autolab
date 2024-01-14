@@ -46,6 +46,7 @@ class TokenData(BaseModel):
 
 
 class User(BaseModel):
+    id: int
     username: str
     email: str | None = None
     full_name: str | None = None
@@ -77,7 +78,14 @@ def get_user(username: str):
     cur.execute(f"SELECT * FROM auth WHERE username=\'{username}\'")
     print(cur.statusmessage)
     for row in cur:
-        user_dict = {'username': row[1], 'hashed_password': row[2], 'role': row[3]}
+        user_dict = {'id': row[0], 'username': row[1], 'hashed_password': row[2]}
+        cur2 = db.cursor()
+        cur2.execute(f"SELECT role_id FROM auth WHERE username=\'{username}\'")
+        for row2 in cur2:
+            user_dict["role"] = row2[0]
+        cur2.execute(f"SELECT surname, first_name, patronymic FROM students WHERE user_id={user_dict['id']}")
+        for row2 in cur2:
+            user_dict["full_name"] = f"{row2[0]} {row2[1]} {row2[2]}"
         return UserInDB(**user_dict)
 
 
@@ -162,10 +170,3 @@ async def login_for_access_token(login=Form(), password=Form()):
 async def read_users_me(request: Request):
     current_user = await get_current_user(request.cookies.get("Authorization"))
     return current_user
-
-
-@app.get("/users/me/items/")
-async def read_own_items(
-        current_user: Annotated[User, Depends(get_current_active_user)]
-):
-    return [{"item_id": "Foo", "owner": current_user.username}]
