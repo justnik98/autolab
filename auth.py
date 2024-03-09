@@ -26,7 +26,7 @@ fake_users_db = {
     }
 }
 
-db = pg.connect(dbname="autolabs", user="postgres", password="123", host="127.0.0.1")
+db = pg.connect(dbname="autolab", user="postgres", password="postgres", host="127.0.0.1")
 
 
 class Status(Enum):
