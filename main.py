@@ -48,7 +48,7 @@ async def op(request: Request):
     return templates.TemplateResponse("op.html", {"request": request})
 
 
-def update_id():
+async def update_id():
     global task_id
     task_id += 1
     return task_id
@@ -56,12 +56,9 @@ def update_id():
 
 @app.post("/post_code", response_class=HTMLResponse)
 async def post_code(request: Request, stud_id: Union[int, None] = None, code=Form(), lang=Form()):
-    stud_id = 123
     problem_id = 123
     global task_id
-    mutex.acquire()
     id = update_id()
-    mutex.release()
     path = f"./data/works/{id}"
     is_exist = os.path.exists(path)
     if not is_exist:
