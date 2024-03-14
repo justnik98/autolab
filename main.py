@@ -43,7 +43,7 @@ async def session_logout(response: Response):
     return {"status": "logged out"}
 
 
-@app.get("/op", dependencies=[Depends(get_teacher_user)])
+@app.get("/op", dependencies=[Depends(get_auth_user)])
 async def op(request: Request):
     return templates.TemplateResponse("op.html", {"request": request})
 
