@@ -83,9 +83,15 @@ def get_user(username: str):
         cur2.execute(f"SELECT role_id FROM auth WHERE username=\'{username}\'")
         for row2 in cur2:
             user_dict["role"] = row2[0]
-        cur2.execute(f"SELECT surname, first_name, patronymic FROM students WHERE user_id={user_dict['id']}")
+        if user_dict["role"] == 0:
+            cur2.execute(f"SELECT surname, first_name, patronymic, email FROM students WHERE user_id={user_dict['id']}")
+        elif user_dict["role"] == 1:
+            cur2.execute(f"SELECT surname, first_name, patronymic, email FROM teachers WHERE user_id={user_dict['id']}")
+        elif user_dict["role"] == 2:
+            cur2.execute(f"SELECT surname, first_name, patronymic, email FROM admins WHERE user_id={user_dict['id']}")
         for row2 in cur2:
             user_dict["full_name"] = f"{row2[0]} {row2[1]} {row2[2]}"
+            user_dict["email"] = row2[3]
         return UserInDB(**user_dict)
 
 
