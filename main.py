@@ -1,14 +1,8 @@
-import json
 import os.path
 import shutil
 import threading
-import subprocess
 from typing import Union
-import uvicorn
-from fastapi import FastAPI, Form, Request, Response
-from fastapi.responses import RedirectResponse
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from auth import *
