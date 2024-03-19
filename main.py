@@ -11,7 +11,6 @@ from auth import *
 templates = Jinja2Templates(directory="templates")
 
 # globals
-mutex = threading.Lock()
 task_id = 0
 
 file_extensions = {
