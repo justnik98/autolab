@@ -5,8 +5,7 @@ from typing import Union
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from auth import *
-
+from admin import *
 # app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
@@ -41,7 +40,7 @@ async def op(request: Request):
     return templates.TemplateResponse("op.html", {"request": request})
 
 
-async def update_id():
+def update_id():
     global task_id
     task_id += 1
     return task_id
@@ -52,6 +51,7 @@ async def post_code(request: Request, stud_id: Union[int, None] = None, code=For
     problem_id = 123
     global task_id
     id = update_id()
+    print(id)
     path = f"./data/works/{id}"
     is_exist = os.path.exists(path)
     if not is_exist:
@@ -60,11 +60,13 @@ async def post_code(request: Request, stud_id: Union[int, None] = None, code=For
     file = open(f"{path}/main{file_extensions[lang]}", 'w')
     file.write(code)
     file.close()
-    os.system(f"docker build . "
-              f"--build-arg lang={lang} "
-              f"--build-arg task_id={id} "
-              f"--build-arg problem_id={problem_id} "
-              f"-t {id}")
+    command = f"docker build . "\
+              f"--bruild-arg lang={lang} "\
+              f"--build-arg task_id={id} "\
+              f"--build-arg problem_id={problem_id} "\
+              f"-t {id}"
+    os.popen(command)
+    os.wait()
     command = f"docker run {id} > {path}/out.txt --rm"
     os.popen(command)
     os.wait()

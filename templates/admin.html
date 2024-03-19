@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>
+    Welcome!
+</h1>
+   <p>
+        <input id = username placeholder="username" value="johndoe" type="text">
+    </p>
+    <p>
+        <input id = password placeholder="password" value="secret" type="password">
+    </p>
+    <p>
+        <input id = surname placeholder="Фамилия" value="Иванов" type="text">
+    </p>
+     <p>
+        <input id = first_name placeholder="Имя" value="Иван" type="text">
+    </p>
+    <p>
+        <input id = patronymic placeholder="Отчество" value="Петрович" type="text">
+    </p>
+    <p>
+        <input id = group placeholder="группа" value="4000" type="text">
+    </p>
+    <p>
+        <input id = email placeholder="email" value="test@testmail.tt" type="text">
+    </p>
+
+    <button onclick=send()>Отправить</button>
+<script>
+    async function send(){
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const surname = document.getElementById("surname").value;
+        const first_name = document.getElementById("first_name").value;
+        const patronymic = document.getElementById("patronymic").value;
+        const group = document.getElementById("group").value;
+        const email = document.getElementById("email").value;
+
+        const response = await fetch("/add_student", {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json"},
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                surname: surname,
+                first_name: first_name,
+                surname: surname,
+                patronymic: patronymic,
+                group: group,
+                email: email
+                })
+            });
+    }
+</script>
+</body>
+</html>

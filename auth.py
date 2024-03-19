@@ -160,10 +160,24 @@ async def get_teacher_user(request: Request):
     if await get_current_user(session_id) is None:
         return False
     user = await get_current_user(session_id)
-    if user.role == 1:
+    if user.role == Status.TUTOR.value:
         return True
     else:
         raise HTTPException(status_code=403)
+
+async def get_admin_user(request: Request):
+    session_id = request.cookies.get("Authorization")
+    if not session_id:
+        raise HTTPException(status_code=401)
+    # return RedirectResponse("/login", status_code=302)
+    if await get_current_user(session_id) is None:
+        return False
+    user = await get_current_user(session_id)
+    if user.role == Status.ADMIN.value or user.role == Status.MAIN_ADMIN.value:
+        return True
+    else:
+        raise HTTPException(status_code=403)
+
 
 
 @app.post("/auth")
