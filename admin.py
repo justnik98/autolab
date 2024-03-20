@@ -60,14 +60,9 @@ async def add_student(data=Body()):
     db.commit()
 
 
-# TODO: сделать чтение данных из json
 @app.post("/delete_user", dependencies=[Depends(get_admin_user)])
-async def delete_user(request: Request):
+async def delete_user(data=Body()):
     cur = db.cursor()
+    user_id = data['user_id']
     cur.execute(f"DELETE FROM auth WHERE id ={user_id}")
     db.commit()
-
-
-@app.get("/add_teacher")
-async def add_teacher(request: Request, data=Body()):
-    return
