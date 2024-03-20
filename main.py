@@ -1,11 +1,8 @@
 import os.path
 import shutil
-import threading
-from typing import Union
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
 from admin import *
+
 # app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
@@ -60,10 +57,10 @@ async def post_code(request: Request, stud_id: Union[int, None] = None, code=For
     file = open(f"{path}/main{file_extensions[lang]}", 'w')
     file.write(code)
     file.close()
-    command = f"docker build . "\
-              f"--bruild-arg lang={lang} "\
-              f"--build-arg task_id={id} "\
-              f"--build-arg problem_id={problem_id} "\
+    command = f"docker build . " \
+              f"--bruild-arg lang={lang} " \
+              f"--build-arg task_id={id} " \
+              f"--build-arg problem_id={problem_id} " \
               f"-t {id}"
     os.popen(command)
     os.wait()
