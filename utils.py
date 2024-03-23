@@ -46,23 +46,17 @@ async def search_students(data=Body()):
     surname = f"{data['surname']}%"
     name = f"{data['first_name']}%"
     patronymic = f"{data['patronymic']}%"
-    group = data['group']
-    group_id = -1
+    group = f"{data['group']}%"
     cur = db.cursor()
-    cmd = f"SELECT * FROM students WHERE " \
-          f"surname LIKE '{surname}' AND " \
-          f"first_name LIKE '{name}' AND " \
-          f"patronymic LIKE '{patronymic}'"
-    if group != "":
-        cur.execute(f"SELECT id from groups WHERE group_num = '{group}'")
-        group_id = cur.fetchone()[0]
-        cmd = f"{cmd} AND group_id = {group_id}"
+    cmd = (f"SELECT surname, first_name, patronymic, group_num, email "
+           f"FROM students RIGHT JOIN groups ON students.group_id = groups.id WHERE "
+           f"surname LIKE '{surname}' AND "
+           f"first_name LIKE '{name}' AND "
+           f"patronymic LIKE '{patronymic}' AND "
+           f"group_num LIKE '{group}'")
     cur.execute(cmd)
-    cur2 = db.cursor()
     for row in cur:
-        cur2.execute(f"SELECT group_num from groups WHERE id = '{row[6]}'")
-        group = cur2.fetchone()[0]
-        s = {'surname': row[2], 'name': row[3], 'patronymic': row[4], 'email': row[5], 'group': group}
+        print(row)
+        s = {'surname': row[0], 'name': row[1], 'patronymic': row[2], 'group': row[3], 'email': row[4]}
         res.append(s)
-        print(s)
     return res
