@@ -152,6 +152,7 @@ async def get_auth_user(request: Request):
         return False
     return True
 
+
 async def get_teacher_user(request: Request):
     session_id = request.cookies.get("Authorization")
     if not session_id:
@@ -165,6 +166,7 @@ async def get_teacher_user(request: Request):
     else:
         raise HTTPException(status_code=403)
 
+
 async def get_admin_user(request: Request):
     session_id = request.cookies.get("Authorization")
     if not session_id:
@@ -177,7 +179,6 @@ async def get_admin_user(request: Request):
         return True
     else:
         raise HTTPException(status_code=403)
-
 
 
 @app.post("/auth")
